@@ -2,7 +2,7 @@
 	"name": "scottboms/link-scanner",
 	"description": "Kirby Link Scanner",
 	"author": "Scott Boms <plugins@scottboms.com>",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"type": "kirby-plugin",
 	"license": "MIT",
 	"scripts": {
@@ -10,6 +10,6 @@
 		"build": "kirbyup src/index.js"
 	},
 	"devDependencies": {
-		"kirbyup": "^3.4.0"
+		"kirbyup": "^3.4.1"
 	}
 }

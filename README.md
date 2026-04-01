@@ -24,6 +24,26 @@ git submodule add https://github.com/scottboms/kirby-link-scanner.git site/plugi
 2. Rename the extracted folder to `link-scanner` and copy it into the `site/plugins/` directory in your Kirby project.
 
 
+## Configuration Options
+
+| Property                         | Default              | Req? | Description                       |
+|----------------------------------|----------------------|------|-----------------------------------|
+| scottboms.link-scanner.timeout   | `8`                  | No   | Timeout for the scanner process   |
+| scottboms.link-scanner.userAgent | `Kirby Link Scanner` | No   | Set a custom UserAgent string     |
+
+Example Config:
+
+```php
+<?php
+  return [
+	  'scottboms.link-scanner' => [
+      'timeout'    => 10,
+      'userAgent'  => 'Kirby Link Scanner',
+    ]
+  ]
+```
+
+
 ## Compatibility
 
 * Kirby 5.x

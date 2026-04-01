@@ -28,7 +28,13 @@
   ],
   "require": {
     "php": ">=8.3.0",
+		"getkirby/cms": "^5.0",
     "getkirby/composer-installer": "^1.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "ScottBoms\\LinkScanner\\": "lib/"
+    }
   },
   "extra": {
     "installer-name": "link-scanner"

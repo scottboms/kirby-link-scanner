@@ -106,11 +106,12 @@ class Scanner {
 
 	protected function extractLinks(string $content): array {
 		$matches = [];
+		$matches = array_merge($matches, $this->extractMarkdownLinks($content));
+
 		$patterns = [
-			'/\[[^\]]+\]\((https?:\/\/[^\s]+|\/[^\s]+|\.\.?\/[^\s]+)\)/i',
 			'/href=(["\'])(.*?)\1/i',
 			'/\((?:link|url):\s*([^)\\s]+).*?\)/i',
-			'/\bhttps?:\/\/[^\s<>"\'\]]+/i',
+			'/\b(https?:\/\/[^\s<>"\'\]]+)/i',
 		];
 
 		foreach ($patterns as $pattern) {
@@ -129,6 +130,23 @@ class Scanner {
 			}
 		}
 		return array_values(array_unique($matches));
+	}
+
+	protected function extractMarkdownLinks(string $content): array
+	{
+		$matches = [];
+		$pattern = '/\[[^\]]*]\(\s*(<[^>\n]+>|(?:https?:\/\/|\/|\.\.?\/)(?:[^()\s]+|\([^)\n]*\))+)(?:\s+(?:"[^"]*"|\'[^\']*\'|\([^)]+\)))?\s*\)/i';
+
+		preg_match_all($pattern, $content, $found);
+
+		foreach (($found[1] ?? []) as $value) {
+			$normalized = $this->normalizeExtractedUrl($value);
+			if ($normalized !== null) {
+				$matches[] = $normalized;
+			}
+		}
+
+		return $matches;
 	}
 
 	protected function normalizeExtractedUrl(string $url): ?string {
