@@ -2,6 +2,10 @@
 
 declare(strict_types=1);
 
+if (is_file(__DIR__ . '/vendor/autoload.php') === true) {
+	require_once __DIR__ . '/vendor/autoload.php';
+}
+
 use Kirby\Cms\App;
 use ScottBoms\LinkScanner\PanelScanController;
 use ScottBoms\LinkScanner\ScanStore;
