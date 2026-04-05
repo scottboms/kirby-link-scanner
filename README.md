@@ -56,6 +56,7 @@ Example Config:
 
 * Kirby 5.x
 * PHP 8.3+ with cURL and php cli exec()
+* Be sure that [Kirby's Vue template compiler](https://getkirby.com/docs/reference/system/options/panel#disable-the-vue-template-compiler) is not disabled
 
 
 ## Disclaimer
