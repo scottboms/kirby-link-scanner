@@ -100,7 +100,7 @@ Kirby::plugin('scottboms/link-scanner', [
 	],
 
 	'info' => [
-		'version' => '1.0.1',
+		'version' => '1.0.3',
 		'homepage' => 'https://github.com/scottboms/kirby-link-scanner',
 		'license' => 'MIT',
 		'authors' => [[
