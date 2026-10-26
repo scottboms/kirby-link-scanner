@@ -11,6 +11,7 @@ TODO.md
 # ---------------------
 /node_modules
 package-lock.json
+index.dev.js
 
 # Lock Files
 # ---------------------

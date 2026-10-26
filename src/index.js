@@ -1,6 +1,6 @@
 import { icons } from "./icons.js";
 
-panel.plugin("scottboms/link-scanner", {
+window.panel.plugin("scottboms/link-scanner", {
 	icons,
 	components: {
 		"k-broken-links-view": {
@@ -88,9 +88,6 @@ panel.plugin("scottboms/link-scanner", {
 							width: "5rem"
 						}
 					};
-				},
-				hasTableOptions() {
-					return this.rows.length > 0;
 				},
 				rows() {
 					return this.latest.results.map((result) => ({
@@ -288,37 +285,15 @@ panel.plugin("scottboms/link-scanner", {
 					});
 				},
 				async requestJson(url, method = "GET", body = null) {
-					const headers = {
-						Accept: "application/json",
-						"X-CSRF": window.panel.system.csrf
-					};
+					const payload = method === "GET"
+						? await this.$panel.get(url)
+						: await this.$panel.post(url, body ?? {});
 
-					if (body !== null) {
-						headers["Content-Type"] = "application/json";
-					}
-
-					const response = await fetch(url, {
-						method,
-						credentials: "same-origin",
-						headers,
-						body: body !== null ? JSON.stringify(body) : null
-					});
-
-					const payloadText = await response.text();
-					let payload = {};
-
-					if (payloadText.length > 0) {
-						try {
-							payload = JSON.parse(payloadText);
-						} catch (error) {
-							throw new Error(payloadText.slice(0, 300));
-						}
-					}
-
-					if (!response.ok || payload?.status === "error") {
+					if (payload?.status === "error") {
 						throw new Error(payload?.message || "The link scan failed.");
 					}
-					return payload;
+
+					return payload ?? {};
 				},
 
 				applyPayload(payload) {
@@ -341,9 +316,7 @@ panel.plugin("scottboms/link-scanner", {
 				},
 
 				showError(message) {
-					this.$panel.notification.error({
-						message
-					});
+					this.$panel.notification.error(message);
 				},
 
 				maybeShowWorkerError() {
@@ -452,39 +425,41 @@ panel.plugin("scottboms/link-scanner", {
 			// Vue panel template
 			template: `
 			<k-panel-inside>
-				<k-view class="k-broken-links-view">
+				<div class="k-broken-links-view">
 					<k-header class="k-site-view-header">
 						Link Scanner
-						<k-button-group slot="buttons">
-							<k-button
-								:disabled="isBusy || isRunning"
-								:icon="runButtonIcon"
-								:text="runButtonText"
-								size="sm"
-								theme="green"
-								variant="filled"
-								@click="startScan"
-							/>
-							<k-button
-								v-if="current.isRunning === true"
-								:disabled="isBusy || isStopping"
-								:icon="isStopping ? 'loader' : 'cancel'"
-								:text="isStopping ? 'Stopping…' : 'Stop Scan'"
-								size="sm"
-								theme="negative"
-								variant="filled"
-								@click="stopScan"
-							/>
-							<k-button
-								:disabled="isBusy"
-								icon="refresh"
-								text="Refresh"
-								size="sm"
-								theme="passive"
-								variant="filled"
-								@click="refreshStatus(true)"
-							/>
-						</k-button-group>
+						<template #buttons>
+							<k-button-group>
+								<k-button
+									:disabled="isBusy || isRunning"
+									:icon="runButtonIcon"
+									:text="runButtonText"
+									size="sm"
+									theme="green"
+									variant="filled"
+									@click="startScan"
+								/>
+								<k-button
+									v-if="current.isRunning === true"
+									:disabled="isBusy || isStopping"
+									:icon="isStopping ? 'loader' : 'cancel'"
+									:text="isStopping ? 'Stopping…' : 'Stop Scan'"
+									size="sm"
+									theme="negative"
+									variant="filled"
+									@click="stopScan"
+								/>
+								<k-button
+									:disabled="isBusy"
+									icon="refresh"
+									text="Refresh"
+									size="sm"
+									theme="passive"
+									variant="filled"
+									@click="refreshStatus(true)"
+								/>
+							</k-button-group>
+						</template>
 					</k-header>
 
 					<k-box v-if="current.lastError" theme="negative" style="margin-bottom: var(--spacing-4);">
@@ -503,7 +478,7 @@ panel.plugin("scottboms/link-scanner", {
 						No broken links were found.
 					</k-box>
 
-					<div v-if="latest.hasScanned === true && isRunning === false" data-variant="columns" class="k-grid k-sections" style="margin-bottom: var(--spacing-4)">
+					<div v-if="latest.hasScanned === true && isRunning === false" data-variant="columns" class="k-grid" style="margin-bottom: var(--spacing-4)">
 						<div class="k-column" style="--width: 1/1">
 							<dl data-size="huge" class="k-stats">
 								<div data-theme="info" class="k-stat">
@@ -546,12 +521,11 @@ panel.plugin("scottboms/link-scanner", {
 						v-else
 						:columns="columns"
 						:rows="rows"
-						:options="hasTableOptions"
 						empty="No broken links found."
 						@option="onTableOption"
 					/>
-					</k-view>
-				</k-panel-inside>`
+				</div>
+			</k-panel-inside>`
 		}
 	}
 });

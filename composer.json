@@ -15,29 +15,27 @@
     "docs": "https://github.com/scottboms/kirby-link-scanner/blob/main/README.md",
     "source": "https://github.com/scottboms/kirby-link-scanner"
   },
-  "keywords": [
-    "kirby",
-    "kirby-cms",
-    "kirby-plugin",
-    "kirby4",
-    "kirby5",
-    "kirby5-plugin",
-    "applemusic",
-    "music",
-    "api"
-  ],
-  "require": {
-    "php": ">=8.3.0",
-		"getkirby/cms": "^5.0",
-    "getkirby/composer-installer": "^1.1"
-  },
+	"keywords": [
+		"kirby",
+		"kirby6",
+		"kirby-cms",
+		"kirby-plugin",
+		"kirby6-plugin"
+	],
+	"require": {
+		"php": "~8.3.0 || ~8.4.0 || ~8.5.0",
+		"getkirby/composer-installer": "^1.2"
+	},
+	"extra": {
+		"kirby": {
+			"compatible": "^6.0"
+		},
+		"installer-name": "link-scanner"
+	},
   "autoload": {
     "psr-4": {
       "ScottBoms\\LinkScanner\\": "lib/"
     }
-  },
-  "extra": {
-    "installer-name": "link-scanner"
   },
   "config": {
     "optimize-autoloader": true,

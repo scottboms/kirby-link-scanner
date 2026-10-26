@@ -6,7 +6,7 @@ if (is_file(__DIR__ . '/vendor/autoload.php') === true) {
 	require_once __DIR__ . '/vendor/autoload.php';
 }
 
-use Kirby\Cms\App;
+use Kirby\Cms\App as Kirby;
 use ScottBoms\LinkScanner\PanelScanController;
 use ScottBoms\LinkScanner\ScanStore;
 
@@ -17,94 +17,94 @@ load([
 	'ScottBoms\\LinkScanner\\ScanWorkerManager' => __DIR__ . '/lib/ScanWorkerManager.php',
 ]);
 
+$version = Kirby::version() ?? '0.0.0';
 if (
-	version_compare(App::version() ?? '0.0.0', '5.0.0', '<') === true ||
-	version_compare(App::version() ?? '0.0.0', '6.0.0', '>=') === true
+    version_compare($version, '6.0.0-beta.1', '<') ||
+    version_compare($version, '7.0.0', '>=')
 ) {
-	throw new Exception('Link Scanner requires Kirby v5');
+    throw new Exception('Link Scanner requires Kirby 6');
 }
 
-Kirby::plugin('scottboms/link-scanner', [
-	'options' => [
-		'timeout' => 8,
-		'userAgent' => 'Kirby Link Scanner',
-	],
-
-	'areas' => [
-		'link-scanner' => function () {
-			if (kirby()->user() === null) {
-				return [];
-			}
-
-			$store = new ScanStore(kirby());
-
-			return [
-				'label' => 'Link Scanner',
-				'icon' => 'scanner',
-				'breadcrumbLabel' => fn () => 'Link Scanner',
-				'menu' => true,
-				'link' => 'link-scanner',
-				'views' => [
-					[
-						'pattern' => 'link-scanner',
-						'action' => function () use ($store) {
-							return [
-								'component' => 'k-broken-links-view',
-								'props' => [
-								'initialLatest' => $store->latest(),
-								'initialCurrent' => $store->current(),
-								'startUrl' => kirby()->url('api') . '/link-scanner/start',
-								'stopUrl' => kirby()->url('api') . '/link-scanner/stop',
-								'completeUrl' => kirby()->url('api') . '/link-scanner/complete',
-								'statusUrl' => kirby()->url('api') . '/link-scanner/status',
-							],
-						];
-						},
-					],
-				],
-			];
-		},
-	],
-
-	'api' => [
-		'routes' => [
-			[
-				'pattern' => 'link-scanner/start',
-				'method' => 'POST',
-				'action' => function () {
-					return (new PanelScanController(kirby()))->start();
-				},
-			],
-			[
-				'pattern' => 'link-scanner/stop',
-				'method' => 'POST',
-				'action' => function () {
-					return (new PanelScanController(kirby()))->stop();
-				},
-			],
-			[
-				'pattern' => 'link-scanner/complete',
-				'method' => 'POST',
-				'action' => function () {
-					return (new PanelScanController(kirby()))->complete();
-				},
-			],
-			[
-				'pattern' => 'link-scanner/status',
-				'method' => 'GET',
-				'action' => function () {
-					return (new PanelScanController(kirby()))->status();
-				},
-			],
-		],
-	],
-
-	'info' => [
-		'version' => '1.0.3',
+Kirby::plugin('scottboms/link-scanner',
+	info: [
 		'homepage' => 'https://github.com/scottboms/kirby-link-scanner',
+		'version' => '6.0.0',
 		'license' => 'MIT',
-		'authors' => [[
-			'name' => 'Scott Boms',
-		]],
+		'authors' => [[ 'name' => 'Scott Boms' ]]
 	],
-]);
+	extends: [
+		'options' => [
+			'timeout' => 8,
+			'userAgent' => 'Kirby Link Scanner',
+		],
+
+		'areas' => [
+			'link-scanner' => function () {
+				if (kirby()->user() === null) {
+					return [];
+				}
+
+				$store = new ScanStore(kirby());
+
+				return [
+					'label' => 'Link Scanner',
+					'icon' => 'scanner',
+					'breadcrumbLabel' => fn () => 'Link Scanner',
+					'menu' => true,
+					'link' => 'link-scanner',
+					'views' => [
+						[
+							'pattern' => 'link-scanner',
+							'action' => function () use ($store) {
+								return [
+									'component' => 'k-broken-links-view',
+									'props' => [
+									'initialLatest' => $store->latest(),
+									'initialCurrent' => $store->current(),
+									'startUrl' => kirby()->url('api') . '/link-scanner/start',
+									'stopUrl' => kirby()->url('api') . '/link-scanner/stop',
+									'completeUrl' => kirby()->url('api') . '/link-scanner/complete',
+									'statusUrl' => kirby()->url('api') . '/link-scanner/status',
+								],
+							];
+							},
+						],
+					],
+				];
+			},
+		],
+
+		'api' => [
+			'routes' => [
+				[
+					'pattern' => 'link-scanner/start',
+					'method' => 'POST',
+					'action' => function () {
+						return (new PanelScanController(kirby()))->start();
+					},
+				],
+				[
+					'pattern' => 'link-scanner/stop',
+					'method' => 'POST',
+					'action' => function () {
+						return (new PanelScanController(kirby()))->stop();
+					},
+				],
+				[
+					'pattern' => 'link-scanner/complete',
+					'method' => 'POST',
+					'action' => function () {
+						return (new PanelScanController(kirby()))->complete();
+					},
+				],
+				[
+					'pattern' => 'link-scanner/status',
+					'method' => 'GET',
+					'action' => function () {
+						return (new PanelScanController(kirby()))->status();
+					},
+				],
+			],
+		]
+	]
+);
