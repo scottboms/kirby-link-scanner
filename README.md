@@ -55,7 +55,7 @@ Example Config:
 ## Compatibility
 
 * Kirby 6.x
-* PHP 8.3 - 8.5 with cURL and php cli exec()
+* PHP 8.3 - 8.6 with cURL and php cli exec()
 
 
 ## Disclaimer

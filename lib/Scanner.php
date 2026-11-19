@@ -6,10 +6,10 @@ namespace ScottBoms\LinkScanner;
 
 use Exception;
 use Kirby\Cms\App;
+use Kirby\Cms\Url;
 use Kirby\Filesystem\Dir;
 use Kirby\Filesystem\F;
 use Kirby\Http\Router;
-use Kirby\Http\Url;
 use Kirby\Toolkit\Str;
 
 class Scanner {
